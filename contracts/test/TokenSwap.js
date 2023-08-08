@@ -76,8 +76,12 @@ contract("TokenSwap", (accounts) => {
     const TokenBInstance = await TokenB.new();
     await TokenSwapInstance.setTokenAddressToInfo(TokenBInstance.address, 1000);
     const result = await TokenSwapInstance.getTokensDetail();
+    const tokens = await TokenSwapInstance.getTokensList();
     const expected = [["18", "10000", "TKA"],["18", "1000", "TKB"]];
     console.log(result[1][2]);
+    console.log("TKA address: ", TokenAInstance.address)
+    console.log("TKB address: ", TokenBInstance.address)
+    console.log(tokens)
     assert.deepEqual(result, expected);
   })
 
