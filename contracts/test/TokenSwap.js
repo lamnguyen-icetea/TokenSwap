@@ -34,13 +34,18 @@ contract("TokenSwap", (accounts) => {
   })
 
   it("should return correct token decimals", async () => {
-    const result = await TokenSwapInstance.getTokenAddressToInfoDecimals(ethers.ZeroAddress);
+    const result = await TokenSwapInstance.getTokenDecimals(ethers.ZeroAddress);
     assert.equal(result, 18);
   })
 
   it("should return correct token rate", async () => {
-    const result = await TokenSwapInstance.getTokenAddressToInfoRate(ethers.ZeroAddress);
+    const result = await TokenSwapInstance.getTokenRate(ethers.ZeroAddress);
     assert.equal(result, 1);
+  })
+
+  it("should return correct token symbol", async () => {
+    const result = await TokenSwapInstance.getTokenSymbol(ethers.ZeroAddress);
+    assert.equal(result, "ETH");
   })
 
   it("should be able to set token info", async () => {
@@ -48,10 +53,12 @@ contract("TokenSwap", (accounts) => {
     await TokenSwapInstance.setTokenAddressToInfo(TokenAInstance.address, 10000);
     const TKADecimalsResult = await TokenAInstance.decimals();
     const TKADecimals = TKADecimalsResult.toNumber();
-    const decimals = await TokenSwapInstance.getTokenAddressToInfoDecimals(TokenAInstance.address);
-    const rate = await TokenSwapInstance.getTokenAddressToInfoRate(TokenAInstance.address);
+    const decimals = await TokenSwapInstance.getTokenDecimals(TokenAInstance.address);
+    const rate = await TokenSwapInstance.getTokenRate(TokenAInstance.address);
+    const symbol = await TokenSwapInstance.getTokenSymbol(TokenAInstance.address);
     assert.equal(decimals, TKADecimals);
     assert.equal(rate, 10000);
+    assert.equal(symbol, "TKA");
   })
 
   it("should be able to get tokens list", async () => {
@@ -63,17 +70,30 @@ contract("TokenSwap", (accounts) => {
     assert.deepEqual(tokens, [TokenAInstance.address, TokenBInstance.address]);
   })
 
+  it("should be able to get tokens detail", async () => {
+    const TokenAInstance = await TokenA.new();
+    await TokenSwapInstance.setTokenAddressToInfo(TokenAInstance.address, 10000);
+    const TokenBInstance = await TokenB.new();
+    await TokenSwapInstance.setTokenAddressToInfo(TokenBInstance.address, 1000);
+    const result = await TokenSwapInstance.getTokensDetail();
+    const expected = [["18", "10000", "TKA"],["18", "1000", "TKB"]];
+    console.log(result[1][2]);
+    assert.deepEqual(result, expected);
+  })
+
   it("should be able to remove a token from list", async () => {
     const TokenAInstance = await TokenA.new();
     await TokenSwapInstance.setTokenAddressToInfo(TokenAInstance.address, 10000);
     const TokenBInstance = await TokenB.new();
     await TokenSwapInstance.setTokenAddressToInfo(TokenBInstance.address, 1000);
     await TokenSwapInstance.removeTokenAddressToInfo(TokenAInstance.address);
-    const rateTokenA = await TokenSwapInstance.getTokenAddressToInfoRate(TokenAInstance.address);
-    const decimalsTokenA = await TokenSwapInstance.getTokenAddressToInfoDecimals(TokenAInstance.address);
+    const rateTokenA = await TokenSwapInstance.getTokenRate(TokenAInstance.address);
+    const decimalsTokenA = await TokenSwapInstance.getTokenDecimals(TokenAInstance.address);
+    const symbolTokenA = await TokenSwapInstance.getTokenSymbol(TokenAInstance.address);
     const tokens = await TokenSwapInstance.getTokensList();
     assert.equal(rateTokenA, 0);
     assert.equal(decimalsTokenA, 0);
+    assert.equal(symbolTokenA, "");
     assert.deepEqual(tokens, [TokenBInstance.address]);
   })
 
