@@ -19,7 +19,6 @@ const Admin = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) 
     const info = await tokenSwapInstance.methods.getTokensDetail().call()
     const tokens = await tokenSwapInstance.methods.getTokensList().call()
     const tokensInfo = handleTokensInfo(info, tokens)
-    console.log(tokensInfo)
     setTokensList(tokens)
     setTokensInfo(tokensInfo)
   }

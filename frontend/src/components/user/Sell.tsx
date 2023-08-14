@@ -13,6 +13,7 @@ const Sell = ({ tokensInfo, getRate, sellToken, approveToken }: IProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [selectedToken, setSelectedToken] = useState<ISwapTokenInfoWithAddr>()
   const [amount, setAmount] = useState<number>(0)
+  const [errorMsg, setErrorMsg] = useState<string>('')
 
   const handleSelect = (token: string) => {
     const selected = tokensInfo.find((item) => item.address === token)
@@ -20,7 +21,18 @@ const Sell = ({ tokensInfo, getRate, sellToken, approveToken }: IProps) => {
     setSelectedToken(selected)
   }
 
+  const validateAmount = () => {
+    if (!amount || amount <= 0) {
+      setErrorMsg('Amount must be greater than 0.')
+      return false
+    }
+    setErrorMsg('')
+    return true
+  }
+
   const handleSell = async () => {
+    const valid = validateAmount()
+    if (!valid) return
     try {
       setLoading(true)
       const address = selectedToken.address
@@ -31,6 +43,7 @@ const Sell = ({ tokensInfo, getRate, sellToken, approveToken }: IProps) => {
 
       await approveToken(address, weiAmount)
       await sellToken(address, weiAmount)
+      setAmount(0)
       setLoading(false)
     } catch (error) {
       console.debug(error)
@@ -40,9 +53,9 @@ const Sell = ({ tokensInfo, getRate, sellToken, approveToken }: IProps) => {
 
   return (
     <div>
-      <div>Please select token you want to sell</div>
+      <div className='mb-2'>Please select token you want to sell</div>
       <select
-        className='w-40'
+        className='w-40 mb-4'
         value={selectedToken?.address || 'default'}
         onChange={(e) => handleSelect(e.target.value)}
       >
@@ -51,23 +64,36 @@ const Sell = ({ tokensInfo, getRate, sellToken, approveToken }: IProps) => {
           -- select a token --{' '}
         </option>
         {tokensInfo.map((token) => {
-          return <option value={token.address}>{token.symbol}</option>
+          return (
+            <option key={token.address} value={token.address}>
+              {token.symbol}
+            </option>
+          )
         })}
       </select>
       {selectedToken && (
-        <div>
-          <div>{selectedToken.symbol}</div>
-          <label>Amount:</label>
-          <input
-            disabled={loading}
-            type='number'
-            min={0}
-            value={amount}
-            onChange={(e) => setAmount(e.target.valueAsNumber)}
-          />
+        <div className='flex flex-col gap-1'>
+          <div>{`Selected: ${selectedToken.symbol} (${selectedToken.address})`}</div>
+          <div>
+            <label className='mr-2'>Amount:</label>
+            <input
+              className='px-2'
+              disabled={loading}
+              type='number'
+              min={0}
+              value={amount}
+              onChange={(e) => setAmount(e.target.valueAsNumber)}
+            />
+          </div>
+
           <div>Estimated receiving ETH (exchange rates may vary): {amount / selectedToken.rate} ETH</div>
-          <button disabled={loading} onClick={handleSell}>
-            Sell
+          {errorMsg && <div className='text-red-600'>{errorMsg}</div>}
+          <button
+            className={`w-20 mx-auto border border-black rounded bg-gray-100 ${loading && 'cursor-progress'}`}
+            disabled={loading}
+            onClick={handleSell}
+          >
+            {loading ? 'Loading...' : 'Sell'}
           </button>
         </div>
       )}

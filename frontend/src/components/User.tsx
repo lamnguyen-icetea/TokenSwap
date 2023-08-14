@@ -23,7 +23,6 @@ const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) =
     const info = await tokenSwapInstance.methods.getTokensDetail().call()
     const tokens = await tokenSwapInstance.methods.getTokensList().call()
     const tokensInfo = handleTokensInfo(info, tokens)
-    console.log(tokensInfo)
     setTokensList(tokens)
     setTokensInfo(tokensInfo)
   }
@@ -37,7 +36,6 @@ const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) =
   }
 
   const sellToken = async (token: string, amount: any) => {
-    console.log(token, amount)
     try {
       await tokenSwapInstance.methods.sellToken(token, amount).send({ from: accounts[0] })
     } catch (error) {
@@ -80,18 +78,21 @@ const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) =
   return (
     <div className='px-16 py-10'>
       <UserTokensTable tokensInfo={tokensInfo} />
-      <div className='mt-8 mb-4 flex justify-center'>
-        <div className={`w-24 text-center ${currentTab === 'buy' && 'font-bold'}`} onClick={() => setCurrentTab('buy')}>
+      <div className='mt-8 mb-4 flex justify-center gap-4'>
+        <div
+          className={`w-20 text-center cursor-pointer ${currentTab === 'buy' && 'font-bold'}`}
+          onClick={() => setCurrentTab('buy')}
+        >
           Buy
         </div>
         <div
-          className={`w-24 text-center ${currentTab === 'sell' && 'font-bold'}`}
+          className={`w-20 text-center cursor-pointer ${currentTab === 'sell' && 'font-bold'}`}
           onClick={() => setCurrentTab('sell')}
         >
           Sell
         </div>
         <div
-          className={`w-24 text-center ${currentTab === 'swap' && 'font-bold'}`}
+          className={`w-20 text-center cursor-pointer ${currentTab === 'swap' && 'font-bold'}`}
           onClick={() => setCurrentTab('swap')}
         >
           Swap
@@ -101,7 +102,9 @@ const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) =
       {currentTab === 'sell' && (
         <Sell tokensInfo={tokensInfo} getRate={getRate} sellToken={sellToken} approveToken={approveToken} />
       )}
-      {currentTab === 'swap' && <Swap tokensInfo={tokensInfo} getRate={getRate} swapToken={swapToken} approveToken={approveToken} />}
+      {currentTab === 'swap' && (
+        <Swap tokensInfo={tokensInfo} getRate={getRate} swapToken={swapToken} approveToken={approveToken} />
+      )}
     </div>
   )
 }

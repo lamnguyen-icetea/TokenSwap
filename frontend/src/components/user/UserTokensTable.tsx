@@ -17,7 +17,7 @@ const UserTokensTable = ({ tokensInfo }: IProps) => {
       <tbody>
         {tokensInfo.map((data) => {
           return (
-            <tr>
+            <tr key={data.address}>
               <td className='py-2 px-4 text-sm text-left border border-black bg-gray-100'>{data.address}</td>
               <td className='py-2 px-4 text-sm text-left border border-black bg-gray-100'>{data.symbol}</td>
               <td className='py-2 px-4 text-sm text-left border border-black bg-gray-100'>{data.rate}</td>
