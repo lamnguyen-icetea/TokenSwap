@@ -56,7 +56,7 @@ const Buy = ({ tokensInfo, getRate, buyToken }: IProps) => {
         value={selectedToken?.address || 'default'}
         onChange={(e) => handleSelect(e.target.value)}
       >
-        <option disabled selected value='default' className='hidden'>
+        <option disabled value='default' className='hidden'>
           {' '}
           -- select a token --{' '}
         </option>

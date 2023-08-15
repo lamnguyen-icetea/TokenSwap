@@ -69,7 +69,7 @@ const Swap = ({ tokensInfo, getRate, swapToken, approveToken }: IProps) => {
             value={selectedTokenFrom?.address || 'default'}
             onChange={(e) => handleSelectFrom(e.target.value)}
           >
-            <option disabled selected value='default' className='hidden'>
+            <option disabled value='default' className='hidden'>
               {' '}
               -- select a token --{' '}
             </option>
@@ -105,7 +105,7 @@ const Swap = ({ tokensInfo, getRate, swapToken, approveToken }: IProps) => {
             value={selectedTokenTo?.address || 'default'}
             onChange={(e) => handleSelectTo(e.target.value)}
           >
-            <option disabled selected value='default' className='hidden'>
+            <option disabled value='default' className='hidden'>
               {' '}
               -- select a token --{' '}
             </option>

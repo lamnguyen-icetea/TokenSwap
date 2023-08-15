@@ -14,6 +14,8 @@ interface IProps {
   tokenSwapInstance: any
 }
 
+const UPDATE_INTERVAL = 60000
+
 const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) => {
   const [tokensInfo, setTokensInfo] = useState<ISwapTokenInfoWithAddr[]>([])
   const [tokensList, setTokensList] = useState<string[]>([])
@@ -70,6 +72,14 @@ const User = ({ web3, accounts, tokenSwapAddress, tokenSwapInstance }: IProps) =
       console.debug(error)
     }
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getTokensInfo()
+    }, UPDATE_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     getTokensInfo()

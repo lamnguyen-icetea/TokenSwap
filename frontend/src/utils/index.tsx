@@ -49,7 +49,7 @@ export const getWeb3 = () => {
   })
 }
 
-export const switchNetwork = async (chainId: number, web3) => {
+export const switchNetwork = async (chainId: number, web3: any) => {
   const currentChainId = await web3.eth.net.getId()
 
   if (currentChainId !== chainId) {
